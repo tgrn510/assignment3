@@ -238,14 +238,35 @@ server=
           deferRender =TRUE,
           scrollCollapse = TRUE,
           fixedHeader = TRUE,
-          scroller = TRUE,
-          autofill = TRUE,
-          columns = I("[{'data':'genes'},{'data':'biotype'}]")
+          scroller = TRUE
         )
   )
   }
 )
 ```
+<!-- End of Assignment -->
 
+<!-- The text below is just to reformat the page, using css styling -->
+```{r results="asis", echo = FALSE}
+cat("
+<style>
+h1 {
+    background-color: #990000;
+    color:#FFF;
+    text-align:center;
+}
+h2 {
+   background-color:#f3d6d6;
+   text-align:center;
+   color:#333
+}
+h3 {
+   margin-left:-5px;
+   text-align:center;
+   color:#333
+}
 
+</style>
+")
+```
 
