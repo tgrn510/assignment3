@@ -8,20 +8,23 @@ runtime: shiny
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Assignment 3
-*Completed by *place your name here*
-### Create a RMarkdown respository:
-1. **- README (10 pt) file in top level directory.** 
-+ The readme will contain your name*
-2. **- An MIT License (10 pt)**
-3. **--original**  Directory containing assignment named original
-4. **original/index.Rmd**    R file containing the text here without editing
-5. ** index.Rmd**  R markup file containing your completed homework
+### Create a R Markdown powered Web Application w/ R & Shiny:
+### Share it with github
+
+1. **README (10 pt) file in top level directory.** 
++ The readme will contain your name
+2. **LICENSE** An MIT License (10 pt)**
+3. **original** Directory containing assignment named original
+4. **original/index.Rmd** File containing the text here without editing
+5. **index.Rmd**  R markup file containing your completed homework
+6. **data** A directory containing data we will use
+7. **data/gene_id2gene.tsv.gz** A file containing gene_id and gene mapping
+8. **data/cohort.tpms.csv.gz** A file containing expression levels for a set of samples
 
 
-### Question 1
+# Question 1
 
-#### Question 1 Background
+## Question 1 Background
 We will use example data from R, the iris dataset.  For the assignment, I'll ask for you to complete things from the diamonds or iris dataset. These are preloaded datasets
 
 data(diamonds)
@@ -30,13 +33,18 @@ summary(diamonds)
 ```{r}
   library('rmarkdown')
   library("ggplot2")
+  library("plotly")
+  library("DT")
   diamonds<-diamonds
   iris<-iris
   summary(iris)
 ```
 
 
-##### Question 1 Background: Analysis of our iris dataset
+### Question 1 Background: Analysis of our iris dataset
+Example functions and how to use them to calculate some stats manually.
+Remember one can look these up online.
+
 ```{r}
 # Calculates the mean values for the aggregates given by the Species column in the iris data set.
  iris_mean <- aggregate(iris[,1:4], by=list(Species=iris$Species), FUN=mean)
@@ -53,7 +61,7 @@ mydata <- as.vector(as.matrix(df[,-1])); df <- data.frame(df[,1], mydata, myfact
  limits <- aes(ymax = df_mean[,2] + df_sd[,2], ymin=df_mean[,2] - df_sd[,2])
 ```
 
-#### **Question 1** (20 Points): 
+## **Question 1** (20 Points): 
 1. Please put the Mean Petal Length into mean_petal_length variable
 + *Provide your answer here*
 2. Please put the Max Petal Length max_petal_length variable
@@ -61,12 +69,14 @@ mydata <- as.vector(as.matrix(df[,-1])); df <- data.frame(df[,1], mydata, myfact
 3. How many vectors (columns) are there in Iris and what are there names?
 + *Provide your answer here*
 
-### Question 2
+# Question 2
 
-#### Question 2 Background
+### Question 2 Background
 
-##### Question 2 Background: Examples with *ggplot2*
+### Question 2 Background: Examples with *ggplot2*
+
   Ploting two vectors (columns) in form of a scatter plot against each other and places into a png image called *twovectors.png* in the images directory.  Make sure you have made your directory
+  
 ```{r}
 dir.create('images')
 ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()
@@ -75,30 +85,31 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()
 dev.off()
 ```
 
-##### Question 2 Background Example 1: Plots larger dots and colors them with default color scheme.
+### Question 2 Background Example A: Plots larger dots and colors them with default color scheme.
+
 ```{r example1}
 example1 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point(aes(color = Species), size=4)
 return(example1)
 ```
 
-##### Question 2 Background Example 2: Colors dots with custom scheme.
+### Question 2 Background Example B: Colors dots with custom scheme.
 ```{r example2}
 example2 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point(aes(color = Species), size=4) + ylim(2,4) + xlim(4,8) + scale_color_manual(values=rainbow(10))
 return(example2)
 ```
 
-##### Question 2 Background Example 3: Adds a regression line to the plot.
+### Question 2 Background Example C: Adds a regression line to the plot.
 ```{r example3}
 example3 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point() + stat_smooth(method="lm", se=FALSE) + ylim(2,4) + xlim(4,8) + scale_color_manual(values=rainbow(10))
 return(example3)
 ```
-##### Question 2 Background Example 4: Plots three line plots, one for each sample in Species column.
+### Question 2 Background Example D: Plots three line plots, one for each sample in Species column.
 ```{r example4}
 example4 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_line(aes(color=Species), size=1) + facet_wrap(~Species, ncol=1)
 return(example4)
 ```
 
-##### Question 2 Background Example 5: Plots with q plot
+### Question 2 Background Example E: Plots with q plot
 Qplot is another way to do ggplot2, but a bit simpler
 ```{r example5}
 example5<-qplot(Sepal.Length, Petal.Length, data = iris, color = Species, size = Petal.Width)
@@ -106,38 +117,50 @@ return(example5)
 ```
 
 
-##### Question 2 Background Example 6: same with ggplot
+### Question 2 Background Example F
+#### Same with ggplot & _Plotly_
+
 ```{r example6}
-example6<-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color=Species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+a<-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color=Species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+example6<-ggplotly(a)
 return(example6)
 ```
 
-#### **Question 2** (20 Points): 
-Using diamonds place graph of carat (x-axis) vs. price (y-axis), color by clarity, faceet by cut with a title
+## **Question 2** (20 Points): 
+Using **diamonds** instead of **iris** model data place graph of carat (x-axis) vs. price (y-axis), color by clarity, facet by cut with a title (Based on Example 2F).
 
 
 
-#### **Question 3** 
+# **Question 3** 
 
-##### Question 3 Background Building a Widget
+### Question 3 Background Building a Widget
 *Lets create our inputs (remember to make these code)*
 
+<pre>
 inputPanel(
-  selectInput("var1", label = "Choose Xaxis:", choices = c("Sepal.Length","Petal.Length"), selected = "Petal.Length"),
-  selectInput("var2",  label = "Choose Yaxis:", choices = c("Sepal.Width","Petal.Width"), selected = "Petal.Width")
+  selectInput("var1", label = "Choose Xaxis:", 
+     choices = c("Sepal.Length","Petal.Length"), selected = "Petal.Length"
+     ),
+  selectInput("var2",  label = "Choose Yaxis:", 
+     choices = c("Sepal.Width","Petal.Width"), selected = "Petal.Width"
+     )
 )
-
+</pre>
 *Lets create our outputs (remember to make these code)*
 
+<pre>
 renderPlot({
   x_axis <- input$var1
   y_axis <- input$var2
   species <- "Species"
-   example13<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
-   example13
-}) 
+  example13<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) +
+      geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+  example13
+})
+</pre>
 
-```{r  echo = FALSE}
+### Example 3A
+```{r echo = FALSE}
 inputPanel(
   selectInput("var1", label = "Choose Xaxis:", choices = c("Sepal.Length","Petal.Length"), selected = "Petal.Length"),
   selectInput("var2",  label = "Choose Yaxis:", choices = c("Sepal.Width","Petal.Width"), selected = "Petal.Width")
@@ -146,43 +169,193 @@ inputPanel(
 
 
 ```{r  echo = FALSE}
-renderPlot({
+library(plotly)
+renderPlotly({
   x_axis <- input$var1
   y_axis <- input$var2
   species <- "Species"
-   example13<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
-   example13
+   a<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+   ggplotly(a)
 }) 
 ```
-##### **Question 3** (20 Points): 
-Make a similar shiny app with diamonds, allowing changing of axis.
 
-##### **Question 4** (20 Points): 
-##### Question 4 Tables & Joins
+## **Question 3** (20 Points): 
+Make a similar shiny app, based on 3A with **diamonds** modelset allowing changing of axis.
+
+# Question 4
+### Question 4 Background Tables & Joins
 Lets Move to Tables!
 For this we will use Datatables, a library for making tables in HTML.  You may need to install.packages('DT'). We are going to use a set of gene expression values. The genes are listed using their Ensembl "gene_id", and we also wish to  change all of those. 
 
 We are going to use the join and dplyr libraries for this.  Joins are critical to informatics and we will do a special section on them.  For now, make sure you have the dplyr libraries install.packages('dplyr').  
 
-<a src="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data Wrangling Cheatsheet</a>
+<a src="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf"><button>Data Wrangling Cheatsheet</button></a>
 
 Essentially they merge two tables, and this is handy for conversions.
 
 
 ```{r}
-expression <- read.csv('../data/cohort.tpms.csv.gz',header = TRUE, sep = ",",  quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+rna_expression_tpms <- read.csv('data/cohort.tpms.csv.gz',header = TRUE, sep = ",",  quote = "\"", dec = ".", fill = TRUE, row.names = NULL)
 ```
 
+This is a table of expression values.  Lets compare two.  First we need the column names
+
+```{r}
+colnames<-colnames(rna_expression_tpms)
+```
+
+Now Lets create another shiny app that is interactive
+### Example 4A Shiny App to compare TPMs from two samples
+
+```{r}
+colnames<-colnames(rna_expression_tpms)
+inputPanel(
+  selectInput("tpmvar1", label = "Choose Xaxis:", choices = colnames, selected = colnames[3]),
+  selectInput("tpmvar2",  label = "Choose Yaxis:", choices = colnames, selected = colnames[2])
+)
+```
+
+```{r example14}
+renderPlot({
+  x_axis <- input$tpmvar1
+  y_axis <- input$tpmvar2
+   ggplot(rna_expression_tpms, aes_string(x = x_axis, y = y_axis)) +scale_x_log10() + scale_y_log10() + scale_colour_gradient2()+ geom_point()
+}) 
+```
+
+### To the table! 
 We would like to search by gene name, we have another file for conversion
 
 ```{r}
-gene_id2gene <- read.delim2('../data/gene_id2gene.tsv.gz',header = TRUE, sep = "\t", row.names = NULL)
+gene_id2gene <- read.delim2('data/gene_id2gene.tsv.gz',header = TRUE, sep = "\t", row.names = NULL)
 ```
 
 To bring these to a single file, we utilize dplyr
 
-```{r echo=FALSE}
+```{r}
 library('dplyr')
+gene_rna_expression_tpms<-inner_join(gene_id2gene,rna_expression_tpms)
+```
+
+Now lets implement datatables the standard way:
+**https://blog.rstudio.com/2015/06/24/dt-an-r-interface-to-the-datatables-library/**
+  
+  
+<pre>
+library(DT)
+datatable(gene_rna_expression_tpms, options = list( 
+  searching = FALSE, 
+  pageLength = 5, 
+  lengthMenu = c(5, 10, 15, 20)
+))
+</pre>
+
+We get this warning.  
+**"It seems your data is too big for client-side DataTables. You may consider server-side processing: http://rstudio.github.io/DT/server.html"**
+This means that its sending the entire datatable over the internet to the viewer, and that's a lot of data being sent when we are only displaying a small portion.  Its possible using server-side version of DT to only send over what is needed to be displayed. This is described as the link suggests.
+fluidPage(title = 'Use the DT package in shiny',
+  h1('Gene Lookup'),
+  fluidRow(column(12, dataTableOutput('tble_a')))
+)
+
+### Example B. Serverside implementation
+
+```{r}
+library(shiny)
+library(DT)
+shinyApp(
+ui=
+  fluidPage(
+     fluidRow(
+        column(12,DT::dataTableOutput('tbl_b'))
+     )
+   ),
+
+
+server=
+  function(input, output, session) {
+  output$tbl_b <- DT::renderDataTable(gene_rna_expression_tpms,options = list( server = TRUE, 
+          searching = TRUE,
+          sortable = TRUE,
+          order = c(1, 'asc')
+        )
+  )
+  }
+)
+```
+
+
+### Smaller Table
+##### Lets say we wanted the variance. One approach would be through a table.
+I decide to create a new frame called 'mydt'.  I then add on a new column call meanTPM
+which is the mean from column 4 to the last column using colMeans
+
+```{r}
+mydt<-data.frame(gene_rna_expression_tpms$gene)
+mydt$meanTPM<-rowMeans(gene_rna_expression_tpms[,c(4:ncol(gene_rna_expression_tpms))], na.rm = FALSE, dims = 1);
+```
+
+
+### Example C.  Table of Mean
+
+Code is below, remember that we should NOT use tbl_b twice. 
+
+```{r}
+
+library(shiny)
+library(DT)
+shinyApp(
+ui=
+  fluidPage(
+     fluidRow(
+        DT::dataTableOutput('mydt')
+     )
+   ),
+
+
+server=
+  function(input, output, session) {
+  output$mydt <- DT::renderDataTable(mydt,options = list( server = TRUE, 
+          searching = TRUE,
+          sortable = TRUE
+        )
+  )
+  }
+)
+
+```
+
+## **Question 4** (20 Points): 
+Make the table above in Example 4B with median instead of mean, and don't reuse tbl_dt in code.  Don't use mydt either - it will confuse the server... You can use those variables once.
+
+Place it here
+
+
+
+<!-- End of Assignment -->
+
+<!-- The text below is just to reformat the page, using css styling -->
+```{r results="asis", echo = FALSE}
+cat("
+<style>
+h1 {
+    background-color: #990000;
+    color:#FFF;
+    text-align:center;
+}
+h2 {
+   background-color:#f3d6d6;
+   text-align:center;
+   color:#333
+}
+h3 {
+   margin-left:-5px;
+   text-align:center;
+   color:#333
+}
+
+</style>
+")
 ```
 
 
