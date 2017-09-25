@@ -53,12 +53,12 @@ mydata <- as.vector(as.matrix(df[,-1])); df <- data.frame(df[,1], mydata, myfact
  limits <- aes(ymax = df_mean[,2] + df_sd[,2], ymin=df_mean[,2] - df_sd[,2])
 ```
 
-#### **Question 1** (8 Points): 
-1. (2pt) Please put the Mean Petal Length into mean_petal_length variable
+#### **Question 1** (20 Points): 
+1. Please put the Mean Petal Length into mean_petal_length variable
 + *Provide your answer here*
-2. (2pt) Please put the Max Petal Length max_petal_length variable
+2. Please put the Max Petal Length max_petal_length variable
 + *Provide your answer here*
-3. How many vectors (columns) are there in Iris and what are there names (4pt)?
+3. How many vectors (columns) are there in Iris and what are there names?
 + *Provide your answer here*
 
 ### Question 2
@@ -117,7 +117,7 @@ Using diamonds place graph of carat (x-axis) vs. price (y-axis), color by clarit
 
 
 
-#### **Question 3** (20 Points): 
+#### **Question 3** 
 
 ##### Question 3 Background Building a Widget
 *Lets create our inputs (remember to make these code)*
@@ -156,5 +156,34 @@ renderPlot({
 ```
 ##### **Question 3** (20 Points): 
 Make a similar shiny app with diamonds, allowing changing of axis.
+
+##### **Question 4** (20 Points): 
+##### Question 4 Tables & Joins
+Lets Move to Tables!
+For this we will use Datatables, a library for making tables in HTML.  You may need to install.packages('DT'). We are going to use a set of gene expression values. The genes are listed using their Ensembl "gene_id", and we also wish to  change all of those. 
+
+We are going to use the join and dplyr libraries for this.  Joins are critical to informatics and we will do a special section on them.  For now, make sure you have the dplyr libraries install.packages('dplyr').  
+
+<a src="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data Wrangling Cheatsheet</a>
+
+Essentially they merge two tables, and this is handy for conversions.
+
+
+```{r}
+expression <- read.csv('../data/cohort.tpms.csv.gz',header = TRUE, sep = ",",  quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+```
+
+We would like to search by gene name, we have another file for conversion
+
+```{r}
+gene_id2gene <- read.delim2('../data/gene_id2gene.tsv.gz',header = TRUE, sep = "\t", row.names = NULL)
+```
+
+To bring these to a single file, we utilize dplyr
+
+```{r echo=FALSE}
+library('dplyr')
+```
+
 
 

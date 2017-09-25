@@ -1,0 +1,251 @@
+---
+title: "Assignment3"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 3
+*Completed by *place your name here*
+### Create a RMarkdown respository:
+1. **- README (10 pt) file in top level directory.** 
++ The readme will contain your name*
+2. **- An MIT License (10 pt)**
+3. **--original**  Directory containing assignment named original
+4. **original/index.Rmd**    R file containing the text here without editing
+5. ** index.Rmd**  R markup file containing your completed homework
+
+
+### Question 1
+
+#### Question 1 Background
+We will use example data from R, the iris dataset.  For the assignment, I'll ask for you to complete things from the diamonds or iris dataset. These are preloaded datasets
+
+data(diamonds)
+summary(diamonds)
+  
+```{r}
+  library('rmarkdown')
+  library("ggplot2")
+  diamonds<-diamonds
+  iris<-iris
+  summary(iris)
+```
+
+
+##### Question 1 Background: Analysis of our iris dataset
+```{r}
+# Calculates the mean values for the aggregates given by the Species column in the iris data set.
+ iris_mean <- aggregate(iris[,1:4], by=list(Species=iris$Species), FUN=mean)
+# Calculates the standard deviations for the aggregates given by the Species column in the iris data set.
+ iris_sd <- aggregate(iris[,1:4], by=list(Species=iris$Species), FUN=sd)
+ convertDF <- function(df=df, mycolnames=c("Species", "Values", "Samples")) { myfactor <- rep(colnames(df)[-1], each=length(df[,1]));
+# Defines function to convert data frames into ggplot2-friendly format.
+mydata <- as.vector(as.matrix(df[,-1])); df <- data.frame(df[,1], mydata, myfactor); colnames(df) <- mycolnames; return(df) }
+# Converts iris_mean.
+ df_mean <- convertDF(iris_mean, mycolnames=c("Species", "Values", "Samples"))
+# Converts iris_sd.
+ df_sd <- convertDF(iris_sd, mycolnames=c("Species", "Values", "Samples"))
+# Define standard deviation limits.
+ limits <- aes(ymax = df_mean[,2] + df_sd[,2], ymin=df_mean[,2] - df_sd[,2])
+```
+
+#### **Question 1** (20 Points): 
+1. Please put the Mean Petal Length into mean_petal_length variable
++ *Provide your answer here*
+2. Please put the Max Petal Length max_petal_length variable
++ *Provide your answer here*
+3. How many vectors (columns) are there in Iris and what are there names?
++ *Provide your answer here*
+
+### Question 2
+
+#### Question 2 Background
+
+##### Question 2 Background: Examples with *ggplot2*
+  Ploting two vectors (columns) in form of a scatter plot against each other and places into a png image called *twovectors.png* in the images directory.  Make sure you have made your directory
+```{r}
+dir.create('images')
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()
+png('images/twovectors.png')
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()
+dev.off()
+```
+
+##### Question 2 Background Example 1: Plots larger dots and colors them with default color scheme.
+```{r example1}
+example1 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point(aes(color = Species), size=4)
+return(example1)
+```
+
+##### Question 2 Background Example 2: Colors dots with custom scheme.
+```{r example2}
+example2 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point(aes(color = Species), size=4) + ylim(2,4) + xlim(4,8) + scale_color_manual(values=rainbow(10))
+return(example2)
+```
+
+##### Question 2 Background Example 3: Adds a regression line to the plot.
+```{r example3}
+example3 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point() + stat_smooth(method="lm", se=FALSE) + ylim(2,4) + xlim(4,8) + scale_color_manual(values=rainbow(10))
+return(example3)
+```
+##### Question 2 Background Example 4: Plots three line plots, one for each sample in Species column.
+```{r example4}
+example4 <- ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_line(aes(color=Species), size=1) + facet_wrap(~Species, ncol=1)
+return(example4)
+```
+
+##### Question 2 Background Example 5: Plots with q plot
+Qplot is another way to do ggplot2, but a bit simpler
+```{r example5}
+example5<-qplot(Sepal.Length, Petal.Length, data = iris, color = Species, size = Petal.Width)
+return(example5)
+```
+
+
+##### Question 2 Background Example 6: same with ggplot
+```{r example6}
+example6<-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color=Species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+return(example6)
+```
+
+#### **Question 2** (20 Points): 
+Using diamonds place graph of carat (x-axis) vs. price (y-axis), color by clarity, faceet by cut with a title
+
+
+
+#### **Question 3** 
+
+##### Question 3 Background Building a Widget
+*Lets create our inputs (remember to make these code)*
+
+<pre>
+inputPanel(
+  selectInput("var1", label = "Choose Xaxis:", 
+     choices = c("Sepal.Length","Petal.Length"), selected = "Petal.Length"
+     ),
+  selectInput("var2",  label = "Choose Yaxis:", 
+     choices = c("Sepal.Width","Petal.Width"), selected = "Petal.Width"
+     )
+)
+</pre>
+*Lets create our outputs (remember to make these code)*
+
+<pre>
+renderPlot({
+  x_axis <- input$var1
+  y_axis <- input$var2
+  species <- "Species"
+  example13<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) +
+      geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+  example13
+})
+</pre>
+
+```{r  echo = FALSE}
+inputPanel(
+  selectInput("var1", label = "Choose Xaxis:", choices = c("Sepal.Length","Petal.Length"), selected = "Petal.Length"),
+  selectInput("var2",  label = "Choose Yaxis:", choices = c("Sepal.Width","Petal.Width"), selected = "Petal.Width")
+)
+```
+
+
+```{r  echo = FALSE}
+renderPlot({
+  x_axis <- input$var1
+  y_axis <- input$var2
+  species <- "Species"
+   example13<-ggplot(iris, aes_string(x = x_axis, y = y_axis, color=species)) + geom_point() + facet_wrap(~Species) + ggtitle("Plot of sepal length vs. petal length")
+   example13
+}) 
+```
+##### **Question 3** (20 Points): 
+Make a similar shiny app with diamonds, allowing changing of axis.
+
+##### **Question 4** (20 Points): 
+##### Question 4 Tables & Joins
+Lets Move to Tables!
+For this we will use Datatables, a library for making tables in HTML.  You may need to install.packages('DT'). We are going to use a set of gene expression values. The genes are listed using their Ensembl "gene_id", and we also wish to  change all of those. 
+
+We are going to use the join and dplyr libraries for this.  Joins are critical to informatics and we will do a special section on them.  For now, make sure you have the dplyr libraries install.packages('dplyr').  
+
+<a src="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf"><button>Data Wrangling Cheatsheet</button></a>
+
+Essentially they merge two tables, and this is handy for conversions.
+
+
+```{r}
+rna_expression_tpms <- read.csv('data/cohort.tpms.csv.gz',header = TRUE, sep = ",",  quote = "\"", dec = ".", fill = TRUE, row.names = NULL)
+```
+
+We would like to search by gene name, we have another file for conversion
+
+```{r}
+gene_id2gene <- read.delim2('data/gene_id2gene.tsv.gz',header = TRUE, sep = "\t", row.names = NULL)
+```
+
+To bring these to a single file, we utilize dplyr
+
+```{r}
+library('dplyr')
+gene_rna_expression_tpms<-inner_join(gene_id2gene,rna_expression_tpms)
+```
+
+Now lets implement datatables the standard way:
+**https://blog.rstudio.com/2015/06/24/dt-an-r-interface-to-the-datatables-library/**
+  
+  
+<pre>
+library(DT)
+datatable(gene_rna_expression_tpms, options = list( 
+  searching = FALSE, 
+  pageLength = 5, 
+  lengthMenu = c(5, 10, 15, 20)
+))
+</pre>
+
+We get this warning.  
+**"It seems your data is too big for client-side DataTables. You may consider server-side processing: http://rstudio.github.io/DT/server.html"**
+This means that its sending the entire datatable over the internet to the viewer, and that's a lot of data being sent when we are only displaying a small portion.  Its possible using server-side version of DT to only send over what is needed to be displayed. This is described as the link suggests.
+fluidPage(title = 'Use the DT package in shiny',
+  h1('Gene Lookup'),
+  fluidRow(column(12, dataTableOutput('tble_a')))
+)
+
+```{r}
+library(shiny)
+library(DT)
+shinyApp(
+ui=
+  fluidPage(
+     fluidRow(
+        column(12,DT::dataTableOutput('tbl_b'))
+     )
+   ),
+
+
+server=
+  function(input, output, session) {
+  output$tbl_b <- DT::renderDataTable(gene_rna_expression_tpms,options = list( server = TRUE, 
+          searching = TRUE,
+          sortable = TRUE,
+          order = c(1, 'asc'),
+          colReorder = TRUE,
+          scrollY = 300,
+          deferRender =TRUE,
+          scrollCollapse = TRUE,
+          fixedHeader = TRUE,
+          scroller = TRUE,
+          autofill = TRUE,
+          columns = I("[{'data':'genes'},{'data':'biotype'}]")
+        )
+  )
+  }
+)
+```
+
+
+
